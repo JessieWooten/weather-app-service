@@ -37,7 +37,6 @@ app.get("/weather", validateWeatherQuery, async (req, res) => {
 
     res.send({
       location,
-      //   address: req.query.address,
       forecast: weatherForcast,
     });
   } catch (e) {
