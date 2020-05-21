@@ -3,7 +3,7 @@ const express = require("express");
 const hbs = require("hbs");
 const fetchGeocode = require("./utils/geocode");
 const fetchForecast = require("./utils/forecast");
-// const validateWeatherQuery = require("../middleware/validateWeatherQuery");
+const validateWeatherQuery = require("./middleware/validateWeatherQuery");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -43,12 +43,8 @@ app.get("/help", (req, res) => {
   });
 });
 
-app.get("/weather", async (req, res) => {
+app.get("/weather", validateWeatherQuery, async (req, res) => {
   try {
-    if (!req.query.address && !(req.query.latitude && req.query.latitude)) {
-      return res.status(400).send({ message: "Must provide location" });
-    }
-
     const locationData = req.query.address
       ? await fetchGeocode(req.query.address)
       : { latitude: req.query.latitude, longitude: req.query.latitude };
