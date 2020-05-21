@@ -26,23 +26,6 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/about", (req, res) => {
-  res.render("about", {
-    title: "About Me",
-    name: "Jessie",
-    imgURL:
-      "https://mir-s3-cdn-cf.behance.net/project_modules/1400/3bc17663189609.5aa8b5d67f396.jpg",
-  });
-});
-
-app.get("/help", (req, res) => {
-  res.render("help", {
-    title: "Help",
-    name: "Jessie",
-    message: "This is your help message ya bish",
-  });
-});
-
 app.get("/weather", validateWeatherQuery, async (req, res) => {
   try {
     const locationData = req.query.address
@@ -63,19 +46,10 @@ app.get("/weather", validateWeatherQuery, async (req, res) => {
   }
 });
 
-app.get("/help/*", (req, res) => {
-  res.render("help", {
-    title: "404 Help",
-    name: "Jessie",
-    message: "Article not found",
-  });
-});
-
 app.get("*", (req, res) => {
-  res.render("help", {
-    title: "404",
+  res.render("index", {
+    title: "Weather App",
     name: "Jessie",
-    message: "404 Page not found",
   });
 });
 
