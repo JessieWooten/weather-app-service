@@ -1,8 +1,9 @@
 const path = require("path");
 const express = require("express");
 const hbs = require("hbs");
-const geocode = require("./utils/geocode");
-const forecast = require("./utils/forecast");
+const fetchGeocode = require("./utils/geocode");
+const fetchForecast = require("./utils/forecast");
+// const validateWeatherQuery = require("../middleware/validateWeatherQuery");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -42,29 +43,28 @@ app.get("/help", (req, res) => {
   });
 });
 
-app.get("/weather", (req, res) => {
-  if (!req.query.address) return res.send({ error: "Must provide address" });
-
-  geocode(
-    req.query.address,
-    (err, { error, latitude, longitude, location } = {}) => {
-      if (err) {
-        res.send({ error: err });
-      } else {
-        forecast(latitude, longitude, location, (err, response) => {
-          if (err) {
-            res.send({ error: err });
-          } else {
-            res.send({
-              location,
-              address: req.query.address,
-              forecast: response,
-            });
-          }
-        });
-      }
+app.get("/weather", async (req, res) => {
+  try {
+    if (!req.query.address && !(req.query.latitude && req.query.latitude)) {
+      return res.status(400).send({ message: "Must provide location" });
     }
-  );
+
+    const locationData = req.query.address
+      ? await fetchGeocode(req.query.address)
+      : { latitude: req.query.latitude, longitude: req.query.latitude };
+    const { latitude, longitude, location } = locationData;
+
+    const weatherForcast = await fetchForecast(latitude, longitude);
+
+    res.send({
+      location,
+      //   address: req.query.address,
+      forecast: weatherForcast,
+    });
+  } catch (e) {
+    const { status, body } = e;
+    res.status(status || 500).send(body || e);
+  }
 });
 
 app.get("/help/*", (req, res) => {
