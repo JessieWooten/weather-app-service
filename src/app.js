@@ -49,7 +49,7 @@ app.get("/weather", validateWeatherQuery, async (req, res) => {
       // if no cached image, save the imgage response
       ImageCache.setImage(weatherForcast.icon, image);
     }
-    console.log(cachedImage, image, 123);
+
     res.send({
       location,
       forecast: weatherForcast,
