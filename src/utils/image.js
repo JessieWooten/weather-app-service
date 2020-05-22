@@ -23,12 +23,13 @@ const fetchImageByKeyword = (keyword) => {
         body: { message: "Bad input" },
       });
     }
-    const color = COLOR_MAP[keyword];
+    const color = COLOR_MAP[keyword.replace("cold ", "")];
     keyword = encodeURIComponent(keyword.split("-").join(" "));
     // get Token from env vars
     const TOKEN = process.env.IMAGE_API_KEY;
     if (!TOKEN) return reject("[Geocode]: No Api key found.");
     const url = `https://api.unsplash.com/search/photos?page=1&query=${keyword}&color=${color}&orientation=landscape&client_id=${TOKEN}`;
+    console.log(url);
     request.get({ url, json: true }, (err, { statusCode, body }) => {
       // if error
       if (err || body.error) {
