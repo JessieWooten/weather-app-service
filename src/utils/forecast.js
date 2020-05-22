@@ -5,7 +5,7 @@ const fetchForecast = (latitude, longitude) => {
     const token = process.env.FORECAST_API_KEY;
     if (!token) return callback("[Weather]: No API key found.");
     const url = `https://api.darksky.net/forecast/${token}/${latitude},${longitude}`;
-    console.log(token, url);
+
     request.get({ url, json: true }, (error, { statusCode, body }) => {
       // if request error
       if (error || body.error) {
@@ -27,7 +27,13 @@ const fetchForecast = (latitude, longitude) => {
           },
         });
       }
-      resolve(body);
+      const forecast = {
+        temperature: body.currently.temperature,
+        summary: body.daily.summary,
+        icon: body.daily.icon,
+        precipProbability: body.currently.precipProbability,
+      };
+      resolve(forecast);
     });
   });
 };
