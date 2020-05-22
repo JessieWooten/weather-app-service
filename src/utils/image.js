@@ -29,7 +29,6 @@ const fetchImageByKeyword = (keyword) => {
     const TOKEN = process.env.IMAGE_API_KEY;
     if (!TOKEN) return reject("[Geocode]: No Api key found.");
     const url = `https://api.unsplash.com/search/photos?page=1&query=${keyword}&color=${color}&orientation=landscape&client_id=${TOKEN}`;
-    console.log(url);
     request.get({ url, json: true }, (err, { statusCode, body }) => {
       // if error
       if (err || body.error) {
