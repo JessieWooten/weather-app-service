@@ -43,9 +43,12 @@ app.get("/weather", validateWeatherQuery, async (req, res) => {
 
     const weatherForcast = await fetchForecast(latitude, longitude);
 
-    const cachedImage = ImageCache.getImageByKey(weatherForcast.icon);
-    const image =
-      cachedImage || (await fetchImageByKeyword(weatherForcast.icon));
+    const keyword =
+      weatherForcast.temperature < 32
+        ? `cold ${weatherForcast.icon}`
+        : weatherForcast.icon;
+    const cachedImage = ImageCache.getImageByKey(keyword);
+    const image = cachedImage || (await fetchImageByKeyword(keyword));
 
     if (cachedImage === undefined) {
       // if no cached image, save the imgage response
