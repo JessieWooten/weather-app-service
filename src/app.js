@@ -52,7 +52,7 @@ app.get("/weather", validateWeatherQuery, async (req, res) => {
 
     if (cachedImage === undefined) {
       // if no cached image, save the imgage response
-      ImageCache.setImage(weatherForcast.icon, image);
+      ImageCache.setImage(keyword, image);
     }
 
     res.send({
