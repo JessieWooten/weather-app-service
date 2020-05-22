@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 const hbs = require("hbs");
 const dotenv = require("dotenv");
+const cors = require("cors");
 // Services
 const fetchGeocode = require("./utils/geocode");
 const fetchForecast = require("./utils/forecast");
@@ -22,6 +23,7 @@ const partialsPath = path.join(__dirname, "../templates/partials");
 
 app.set("view engine", "hbs");
 app.set("views", viewsPath);
+app.use(cors());
 app.use(express.static(public));
 hbs.registerPartials(partialsPath);
 
