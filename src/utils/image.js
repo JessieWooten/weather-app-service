@@ -40,7 +40,7 @@ const fetchImageByKeyword = (keyword) => {
       const { results } = body;
       const image = getRandomImage(results);
       // if not expected shape
-      if (!image || !image.id || !image.urls || !image.urls || !image.user) {
+      if (!image || !image.urls) {
         return reject({
           status: 404,
           body: { message: "Image response is misformed", error: image },
@@ -50,7 +50,7 @@ const fetchImageByKeyword = (keyword) => {
       resolve({
         id: image.id,
         imgUrl: image.urls.regular,
-        photographer: image.user.name,
+        photographer: image.user ? image.user.name : "",
       });
     });
   });
