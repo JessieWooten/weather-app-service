@@ -37,9 +37,8 @@ const fetchImageByKeyword = (keyword) => {
           body: { message: "IMAGE ERROR", error: err || body.error },
         });
       }
-      const {
-        results: [image],
-      } = body;
+      const { results } = body;
+      const image = getRandomImage(results);
       // if not expected shape
       if (!image || !image.id || !image.urls || !image.urls || !image.user) {
         return reject({
@@ -58,3 +57,11 @@ const fetchImageByKeyword = (keyword) => {
 };
 
 module.exports = fetchImageByKeyword;
+
+function getRandomImage(images) {
+  const limit = images.length;
+  if (limit < 2) return images[0];
+
+  const index = Math.floor(Math.random() * limit);
+  return images[index];
+}
