@@ -1,14 +1,15 @@
-const imageCache = () => {
+const imageCache = (expiresAt) => {
   const images = {};
 
   function setImage(key, image) {
     if (!key || !image) {
       throw new Error("[IMAGE CACHE]: Bad input");
     }
-    const sixHoursInMs = 21600000;
+    // const sixHoursInMs = 21600000;
+    const fiveMinutes = 300000;
     images[key] = {
       ...image,
-      expiresAt: Date.now() + sixHoursInMs,
+      expiresAt: Date.now() + fiveMinutes,
     };
   }
   function getCache() {
