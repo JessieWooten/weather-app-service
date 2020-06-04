@@ -5,7 +5,7 @@ const TOKEN = process.env.IMAGE_API_KEY;
 /**
  * accepts a keyword and returns a related image.
  * @param {string} keyword
- * @returns {Promise} resolves as Forecast object {id: string, imgUrl: string, photographer: string} or rejects error
+ * @return {Promise<{id: string, imgUrl: string, photographer: string}>} resolves as Forecast object or rejects error
  */
 const fetchImageByKeyword = (keyword) => {
   return new Promise((resolve, reject) => {
