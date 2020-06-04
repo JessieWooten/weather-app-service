@@ -1,19 +1,29 @@
 const path = require("path");
 const express = require("express");
 const hbs = require("hbs");
-const dotenv = require("dotenv");
 const cors = require("cors");
+const dotenv = require("dotenv");
+dotenv.config();
+// Cache
+const createAppCache = require("./cache");
+const {
+  images: imageCache,
+  geolocation: geolocationCache,
+  forecast: forecastCache,
+} = createAppCache([
+  { key: "images" }, // duration defaults to 5 minutes
+  { key: "geolocation", duration: 172800000 }, // 48 hours
+  { key: "forecast" },
+]);
+module.exports.imageCache = imageCache;
+module.exports.geolocationCache = geolocationCache;
+module.exports.forecastCache = forecastCache;
 // Services
 const fetchGeocode = require("./utils/geocode");
 const fetchForecast = require("./utils/forecast");
 const fetchImageByKeyword = require("./utils/image");
 // Middleware
 const validateWeatherQuery = require("./middleware/validateWeatherQuery");
-// Cache
-const imageCache = require("./cache/images");
-const ImageCache = imageCache();
-
-dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -47,13 +57,7 @@ app.get("/weather", validateWeatherQuery, async (req, res) => {
       weatherForcast.temperature < 32
         ? `cold ${weatherForcast.icon}`
         : weatherForcast.icon;
-    const cachedImage = ImageCache.getImageByKey(keyword);
-    const image = cachedImage || (await fetchImageByKeyword(keyword));
-
-    if (cachedImage === undefined) {
-      // if no cached image, save the imgage response
-      ImageCache.setImage(keyword, image);
-    }
+    const image = await fetchImageByKeyword(keyword);
 
     res.send({
       location,

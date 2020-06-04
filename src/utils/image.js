@@ -1,5 +1,12 @@
 const request = require("request");
+const { imageCache } = require("../app");
+const TOKEN = process.env.IMAGE_API_KEY;
 
+/**
+ * accepts a keyword and returns a related image.
+ * @param {string} keyword
+ * @returns {Promise} resolves as Forecast object {id: string, imgUrl: string, photographer: string} or rejects error
+ */
 const fetchImageByKeyword = (keyword) => {
   return new Promise((resolve, reject) => {
     if (!keyword) {
@@ -10,11 +17,13 @@ const fetchImageByKeyword = (keyword) => {
     }
 
     keyword = encodeURIComponent(keyword.split("-").join(" "));
-    // get Token from env vars
-    const TOKEN = process.env.IMAGE_API_KEY;
+    //check cache
+    const cachedImage = imageCache.getItemByKey(keyword);
+    if (cachedImage) return resolve(cachedImage);
+
+    // no cached results, fetch from api
     if (!TOKEN) return reject("[Geocode]: No Api key found.");
     const url = `https://api.unsplash.com/search/photos?page=1&query=${keyword}&orientation=landscape&client_id=${TOKEN}`;
-    console.log(url);
     request.get({ url, json: true }, (err, { statusCode, body }) => {
       // if error
       if (err || body.error) {
@@ -24,7 +33,6 @@ const fetchImageByKeyword = (keyword) => {
         });
       }
       const { results } = body;
-      console.log(results);
       const image = getRandomImage(results);
       // if not expected shape
       if (!image || !image.urls) {
@@ -37,11 +45,15 @@ const fetchImageByKeyword = (keyword) => {
         });
       }
 
-      resolve({
+      // Success
+      const imageObj = {
         id: image.id,
         imgUrl: image.urls.regular,
         photographer: image.user.name,
-      });
+      };
+
+      imageCache.setItem(keyword, imageObj);
+      resolve(imageObj);
     });
   });
 };
