@@ -47,8 +47,8 @@ const fetchForecast = (latitude, longitude) => {
       }
       const forecast = {
         temperature: body.currently.temperature,
-        summary: body.daily.summary,
-        icon: body.daily.icon,
+        summary: body.currently.summary,
+        icon: body.currently.icon,
         precipProbability: body.currently.precipProbability,
       };
       forecastCache.setItem(forcastCacheKey, forecast);
